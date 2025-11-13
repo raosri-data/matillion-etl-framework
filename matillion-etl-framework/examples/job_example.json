@@ -1,0 +1,19 @@
+{
+  "job_name": "example_incremental_load",
+  "components": [
+    {
+      "type": "Orchestration",
+      "name": "Start"
+    },
+    {
+      "type": "Database Query",
+      "name": "Truncate Temp",
+      "script": "TRUNCATE TABLE IDENTIFIER('{{ jv_target_schema }}.TMP_{{ jv_target_table }}');"
+    },
+    {
+      "type": "Python Script",
+      "name": "Load From Oracle",
+      "script": "# placeholder - use JDBC and incremental WHERE last_update_date > ..."
+    }
+  ]
+}

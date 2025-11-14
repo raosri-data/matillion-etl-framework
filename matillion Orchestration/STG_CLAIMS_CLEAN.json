@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "job_name": "STG_CLAIMS_CLEAN",
+  "job_type": "transformation",
+  "components": [
+    {
+      "type": "TableInput",
+      "name": "Read Staging Table",
+      "id": 1,
+      "x": 80,
+      "y": 120,
+      "properties": {
+        "Table": "staging.stg_claim"
+      }
+    },
+    {
+      "type": "Calculator",
+      "name": "Clean Fields",
+      "id": 2,
+      "x": 280,
+      "y": 120,
+      "properties": {
+        "Calculations": [
+          {"name": "claim_status", "expression": "upper(claim_status)"},
+          {"name": "diagnosis_code", "expression": "upper(diagnosis_code)"},
+          {"name": "procedure_code", "expression": "upper(procedure_code)"},
+          {"name": "billed_amount", "expression": "cast(billed_amount as float)"},
+          {"name": "paid_amount", "expression": "cast(paid_amount as float)"}
+        ]
+      }
+    },
+    {
+      "type": "TableOutput",
+      "name": "Overwrite Cleaned Claims",
+      "id": 3,
+      "x": 480,
+      "y": 120,
+      "properties": {
+        "Target Table": "staging.stg_claim",
+        "Mode": "Overwrite"
+      }
+    }
+  ],
+  "connections": [
+    {"from": 1, "to": 2},
+    {"from": 2, "to": 3}
+  ]
+}

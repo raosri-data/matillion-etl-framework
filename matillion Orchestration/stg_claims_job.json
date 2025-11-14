@@ -1,0 +1,53 @@
+{
+  "version": "1.0",
+  "job_name": "STG_CLAIMS_LOAD",
+  "job_type": "orchestration",
+  "components": [
+    {
+      "type": "Start",
+      "name": "Start",
+      "id": 1,
+      "x": 80,
+      "y": 80
+    },
+    {
+      "type": "SQLScript",
+      "name": "Create Staging Table",
+      "id": 2,
+      "x": 280,
+      "y": 80,
+      "properties": {
+        "SQL Script": "create table if not exists staging.stg_claim (\n  claim_id varchar,\n  patient_id varchar,\n  provider_id varchar,\n  claim_number varchar,\n  claim_type varchar,\n  service_date date,\n  billed_amount float,\n  paid_amount float,\n  claim_status varchar,\n  diagnosis_code varchar,\n  procedure_code varchar,\n  created_at timestamp,\n  updated_at timestamp\n);",
+        "Database": "snowflake_ds"
+      }
+    },
+    {
+      "type": "TableUpdate",
+      "name": "Load Raw Claims → Staging",
+      "id": 3,
+      "x": 480,
+      "y": 80,
+      "properties": {
+        "Target Table": "staging.stg_claim",
+        "Source Table": "raw.claims",
+        "Update Strategy": "Insert",
+        "Column Mapping": "claim_id:claim_id,patient_id:patient_id,provider_id:provider_id,claim_number:claim_number,claim_type:claim_type,service_date:service_date,billed_amount:billed_amount,paid_amount:paid_amount,status:claim_status,diagnosis_code:diagnosis_code,procedure_code:procedure_code,created_at:created_at,updated_at:updated_at"
+      }
+    },
+    {
+      "type": "RunTransformation",
+      "name": "Run Cleaning Transformation",
+      "id": 4,
+      "x": 680,
+      "y": 80,
+      "properties": {
+        "Transformation Job": "STG_CLAIMS_CLEAN"
+      }
+    }
+  ],
+  "connections": [
+    {"from": 1, "to": 2},
+    {"from": 2, "to": 3},
+    {"from": 3, "to": 4}
+  ]
+}
